@@ -1,6 +1,8 @@
 package hellojpa;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -27,16 +29,41 @@ public class Main {
 		try {
 //			1. 팀을 저장
 			Team team = new Team();
-			team.setName("팀1");
+			team.setName("Team A");
 			em.persist(team);
+//			팀 추가하려면 그냥 새로 선언해주면 되네..
+			Team team2 = new Team();
+			team2.setName("Team B");
+			em.persist(team2);
 //			2. 회원을 저장
 			Member member = new Member();
-			member.setName("member1");
+			member.setName("hello");
 			member.setTeam(team);	//단방향 연관관계 설정, 참조 저장 / ID를 꺼내올 필요 없이 객체를 딱 넣어주면 된다.
 			em.persist(member);
-//			3. 회원 조회
-			Member findMember = em.find(Member.class, member);
+//			양방향 매핑 시 주의할 점 위의 member.setTeam()을 실행하지 않고 연관관계의 역방향에 값을 주입할 경우
+			team.getMembers().add(member);
 			
+//			팀 추가한거 새로운 멤버 만들어서 저장해보기 => ?? 뭐여... row가 왜 2줄?
+//			Member member2 = new Member();
+//			member.setName("hello2");
+//			member.setTeam(team2);
+//			em.persist(member2);
+			
+//			em.flush();	//출력 되듯이...
+//			em.clear();	// 캐시 삭제
+//			3. 회원 조회
+			Member findMember = em.find(Member.class, member.getId());
+			Team findTeam = findMember.getTeam();
+
+//			양방향 매핑. Team에 속한 Member 조회하기!
+			List<Member> members = findTeam.getMembers();
+			for(Member mem : members) {
+				int i = 0;
+				System.out.println(i + "번째 member: " + mem);
+				i++;
+			}
+			
+			tx.commit();
 			/* 데이터 지향적인 방법... 연관 관계가 없음
 			 * 아래 코드처럼 진행하면 이루어지는 순서...
 			 * 팀을 저장한다 -> 회원을 저장한다 -> 저장된 회원을 id를 통해 찾아온다. -> id값을 조회해 온 결과에서 가져온다. -> 가져온 id값을 이용해 Team테이블에서 조회해온다.
@@ -59,7 +86,7 @@ public class Main {
 			 * 5. 가져온 id값을 이용해 Team테이블에서 조회해온다.
 				Team findTeam = em.find(Team.class, teamId);
 			*/
-			tx.commit();
+
 		}catch (Exception e) {
 			tx.rollback();
 		}finally {

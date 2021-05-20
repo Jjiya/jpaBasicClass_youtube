@@ -1,0 +1,6 @@
+2021-05-20 10:18:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "MEMBER" not found; SQL statement:
+/* insert hellojpa.entity.Member */ insert into Member (name, id) values (?, ?) [42102-200]
+2021-05-20 10:19:45 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "MEMBER" not found; SQL statement:
+/* insert hellojpa.entity.Member */ insert into Member (name, id) values (?, ?) [42102-200]

@@ -9,6 +9,7 @@ import javax.persistence.Persistence;
 
 import hellojpa.entity.Member;
 import hellojpa.entity.MemberType;
+import hellojpa.entity.Team;
 
 public class Main {
 	public static void main(String args[]) {
@@ -24,16 +25,40 @@ public class Main {
 		tx.begin();
 //		정석 로직 try catch		각 코드에 대한 설명은 아래 단위 주석 내용을 참고
 		try {
+//			1. 팀을 저장
+			Team team = new Team();
+			team.setName("팀1");
+			em.persist(team);
+//			2. 회원을 저장
 			Member member = new Member();
-			member.setId(200L);
-			member.setName("안녕하세용");
-			member.setMemberType(MemberType.ADMIN);
-			member.setAge(100);
-			member.setDate(new Date());
-			member.setTime(new Date());
-			member.setTs(new Date());
+			member.setName("member1");
+			member.setTeam(team);	//단방향 연관관계 설정, 참조 저장 / ID를 꺼내올 필요 없이 객체를 딱 넣어주면 된다.
 			em.persist(member);
+//			3. 회원 조회
+			Member findMember = em.find(Member.class, member);
+			
+			/* 데이터 지향적인 방법... 연관 관계가 없음
+			 * 아래 코드처럼 진행하면 이루어지는 순서...
+			 * 팀을 저장한다 -> 회원을 저장한다 -> 저장된 회원을 id를 통해 찾아온다. -> id값을 조회해 온 결과에서 가져온다. -> 가져온 id값을 이용해 Team테이블에서 조회해온다.
+			 * 테이블의 경우 외래키로 조인을 하면 되지만, 객체는 참조를 해서 연관된 객체를 찾기때문에 bad method이다... 거의 하드코딩 수준?
+			 * 1. 팀을 저장
+				Team team = new Team();
+				team.setName("TeamA");
+				em.persist(team);
+				
+			 * 2. 회원을 저장
+				Member member = new Member();
+				member.setName("member1");
+				member.setTeamId(team.getId());
+				em.persist(member);
 
+			 * 3. 저장된 회원을 id를 통해 찾아온다.
+				Member findMember = em.find(Member.class, member.getId());
+			 * 4. id값을 조회해 온 결과에서 가져온다.
+				Long teamId = findMember.getTeamId();
+			 * 5. 가져온 id값을 이용해 Team테이블에서 조회해온다.
+				Team findTeam = em.find(Team.class, teamId);
+			*/
 			tx.commit();
 		}catch (Exception e) {
 			tx.rollback();

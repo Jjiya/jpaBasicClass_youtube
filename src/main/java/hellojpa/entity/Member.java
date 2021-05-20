@@ -6,14 +6,41 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.Data;
+
 @Entity
+@Data
 public class Member {
 
-	@Id
+	@Id @GeneratedValue
+	private Long id;
+	
+	@Column(name="USERNAME") 
+	private String name;
+	private int age;
+
+	/*
+	 * 데이터 위주의 관계 매핑 방법. 그냥 Team객체의 pk값과 일치시키는 변수 생성
+		 @Column(name = "TEAM_ID")
+		 private Long teamId;
+	 * */
+	
+	@ManyToOne //연관관계 *..1, Member class입장에서의 Team class과의 관계
+	@JoinColumn(name = "TEAM_ID")
+	private Team team;
+	
+}
+
+/**
+ * 강의 3강 학습 위함
+ * @Id
 	private Long id;
 	
 	@Column(length = 20, name="USERNAME",nullable=true)
@@ -29,49 +56,4 @@ public class Member {
 	
 	@Enumerated(EnumType.STRING)	//꼭 StringType으로 저장. default 값이 index처럼 들어감
 	private MemberType memberType;
-	
-
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public int getAge() {
-		return age;
-	}
-	public void setAge(int age) {
-		this.age = age;
-	}
-	public Date getTime() {
-		return time;
-	}
-	public void setTime(Date time) {
-		this.time = time;
-	}
-	public Date getDate() {
-		return date;
-	}
-	public void setDate(Date date) {
-		this.date = date;
-	}
-	public Date getTs() {
-		return ts;
-	}
-	public void setTs(Date ts) {
-		this.ts = ts;
-	}
-	public MemberType getMemberType() {
-		return memberType;
-	}
-	public void setMemberType(MemberType memberType) {
-		this.memberType = memberType;
-	}
-	
-}
+ */

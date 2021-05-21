@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,6 +22,6 @@ public class Team {
 	private Long id;
 	private String name;
 	
-	@OneToMany(mappedBy = "team")	//양방향 매핑을 해주고 싶다면 반대의 경우로도 매핑해주면 된다. Team은 Member와 1..* 관계
+	@OneToMany(mappedBy = "team", fetch = FetchType.LAZY)	//양방향 매핑을 해주고 싶다면 반대의 경우로도 매핑해주면 된다. Team은 Member와 1..* 관계
 	List<Member> members = new ArrayList<Member>();
 }

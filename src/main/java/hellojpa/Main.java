@@ -31,10 +31,7 @@ public class Main {
 			Team team = new Team();
 			team.setName("Team A");
 			em.persist(team);
-//			팀 추가하려면 그냥 새로 선언해주면 되네..
-			Team team2 = new Team();
-			team2.setName("Team B");
-			em.persist(team2);
+
 //			2. 회원을 저장
 			Member member = new Member();
 			member.setName("hello");
@@ -43,28 +40,23 @@ public class Main {
 //			양방향 매핑 시 주의할 점 위의 member.setTeam()을 실행하지 않고 연관관계의 역방향에 값을 주입할 경우
 			team.getMembers().add(member);
 			
-//			팀 추가한거 새로운 멤버 만들어서 저장해보기 => ?? 뭐여... row가 왜 2줄?
-			Member member2 = new Member();
-			member2.setName("hello2");
-			member2.setTeam(team);
-			em.persist(member2);
-			team.getMembers().add(member2);
-			
-//			em.flush();	//출력 되듯이...
-//			em.clear();	// 캐시 삭제
+//			em.flush();	// DB에 즉시 반영하게 됨
+//			em.clear();	// 영속성 컨텍스트 안에 있는 캐시를 삭제
 //			3. 회원 조회
-			Member findMember = em.find(Member.class, member.getId());
-			Team findTeam = findMember.getTeam();
-
-			System.out.println("찾는다 팀! : "+findTeam.getName());
 			
-//			양방향 매핑. Team에 속한 Member 조회하기!
-			List<Member> members = findTeam.getMembers();
+//			String jpql = "select m from Member m join fetch m.team";
+			String jpql = "select m from Member m where m.username like '%h%'";	//왜 안될까?
+			List<Member> members = em.createQuery(jpql, Member.class).getResultList();
 			for(Member mem : members) {
-				System.out.println(" member: " + mem.getName());
+				System.out.println("username: " + mem.getName() + ", teamName " + mem.getTeam().getName());
 			}
 			
+//			Member findMember = em.find(Member.class, member.getId());
+//			findMember.setName("새로운 팀명");	//JPA가 자동으로 UPDATE해줌 변경감지(Dirty Checking) 스냅샷으로 비교해서 업데이트
+			
 			tx.commit();
+			
+			
 			/* 데이터 지향적인 방법... 연관 관계가 없음
 			 * 아래 코드처럼 진행하면 이루어지는 순서...
 			 * 팀을 저장한다 -> 회원을 저장한다 -> 저장된 회원을 id를 통해 찾아온다. -> id값을 조회해 온 결과에서 가져온다. -> 가져온 id값을 이용해 Team테이블에서 조회해온다.

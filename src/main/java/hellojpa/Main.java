@@ -44,10 +44,11 @@ public class Main {
 			team.getMembers().add(member);
 			
 //			팀 추가한거 새로운 멤버 만들어서 저장해보기 => ?? 뭐여... row가 왜 2줄?
-//			Member member2 = new Member();
-//			member.setName("hello2");
-//			member.setTeam(team2);
-//			em.persist(member2);
+			Member member2 = new Member();
+			member2.setName("hello2");
+			member2.setTeam(team);
+			em.persist(member2);
+			team.getMembers().add(member2);
 			
 //			em.flush();	//출력 되듯이...
 //			em.clear();	// 캐시 삭제
@@ -55,12 +56,12 @@ public class Main {
 			Member findMember = em.find(Member.class, member.getId());
 			Team findTeam = findMember.getTeam();
 
+			System.out.println("찾는다 팀! : "+findTeam.getName());
+			
 //			양방향 매핑. Team에 속한 Member 조회하기!
 			List<Member> members = findTeam.getMembers();
 			for(Member mem : members) {
-				int i = 0;
-				System.out.println(i + "번째 member: " + mem);
-				i++;
+				System.out.println(" member: " + mem.getName());
 			}
 			
 			tx.commit();

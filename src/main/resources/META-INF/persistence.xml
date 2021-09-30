@@ -27,9 +27,7 @@
 				테스트 서버 : update 또는 validate
 				운영 서버 : validate 또는 none
              -->
-             <!-- 
 	            <property name="hibernate.hbm2ddl.auto" value="create"/>
-              -->
             <!-- 이름 매핑 전략 설정 - 자바의 카멜 표기법을 테이블의 언더스코어 표기법으로 매핑
             	ex) lastModifiedDate -> last_modified_date -->
            	<!-- 언더스코어 안쓸거같으니까....주석!!

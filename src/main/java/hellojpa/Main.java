@@ -42,18 +42,7 @@ public class Main {
 			
 			em.flush();	// DB에 즉시 반영하게 됨
 			em.clear();	// 영속성 컨텍스트 안에 있는 캐시를 삭제
-			
-//			member.setTeam(team);
-			
-			Member findMember = em.find(Member.class, member.getId());
-			
-//			em.close();	//영속성 종료
-			
-			Team findTeam = findMember.getTeam();
-			System.out.println(findTeam.getName());
-			System.out.println(findTeam + " >>>> find Team 결과");
-//			findMember.setName("로플랩");
-			
+
 //			3. 회원 조회
 //			String jpql = "select m from Member m join fetch m.team";
 			
@@ -63,7 +52,7 @@ public class Main {
 			 * 3. 엔티티 이름을 사용, 테이블 사용이아님 (Member 클래스 명을 써야함)
 			 * 4. 별칭은 필수로 사용해야 한다. 
 			 * */
-			String jpql = "select m from Member m where m.username like '%h%'; ";	//왜 안될까?
+			String jpql = "select m from Member m join fetch m.team where m.username like '%h%'; ";	//왜 안될까?
 
 			/* parameter 바인딩 하는 법 (이름 기준, 위치 기준)
 			 * 순서보단 이름으로 바인딩 하는 것을 추천!!
@@ -74,21 +63,22 @@ public class Main {
 			 * 위치 기준 예시: SELECT m FROM Member m WHERE m.username =: ?1 ;
 			 * 바인딩: query.setParameter(1, usernameParam);
 			 * */
-			List<Member> members = em.createQuery(jpql, Member.class).getResultList();
-			em.flush();	// DB에 즉시 반영하게 됨
-			em.clear();	// 영속성 컨텍스트 안에 있는 캐시를 삭제
-			
+			List<Member> resultList = em.createQuery(jpql, Member.class)
+					.setFirstResult(10)
+					.setMaxResults(20)
+					.getResultList();
+						
 			/*
 			 * query.getResultList() 결과가 하나 이상 리스트로 반환될 때
 			 * query.getSingleResult() 결과가 딱 하나, 단일 객체가 반환될 때, 하나가 아니면 예외 발생함
 			 * */
-			System.out.println("여기");
-			for(Member mem : members) {
-				System.out.println("username: " + mem.getName() + ", teamName " + mem.getTeam().getName());
-			}
+//			System.out.println("여기");
+//			for(Member mem : members) {
+//				System.out.println("username: " + mem.getName() + ", teamName " + mem.getTeam().getName());
+//			}
 			
 //			Member findMember = em.find(Member.class, member.getId());
-			findMember.setName("새로운 팀명");	//JPA가 자동으로 UPDATE해줌 변경감지(Dirty Checking) 스냅샷으로 비교해서 업데이트
+//			findMember.setName("새로운 팀명");	//JPA가 자동으로 UPDATE해줌 변경감지(Dirty Checking) 스냅샷으로 비교해서 업데이트
 			
 			tx.commit();
 			
